@@ -1,13 +1,10 @@
 <?php
 require_once "../vendor/autoload.php";
-$Parsedown = new Parsedown();
-$Parsedown->setSafeMode(true);
-$md = <<<EOF
-@startuml
-Alice -> Bob: Hello
-@enduml
-EOF;
-$htmlContent = $Parsedown->text($md);
+require_once "../config/config.php";
+
+$pageConfig = json_decode(file_get_contents("../config/pages.json"), true);
+$currentPage = $_GET['page'] ?? 'home';
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -18,21 +15,33 @@ $htmlContent = $Parsedown->text($md);
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="editor-pane">
-            <div id="editor"></div>
-        </div>
-        <div class="preview-pane">
-            <div class="preview-controls">
-                <button id="uml-btn">Generate UML</button>
-                <button id="download-png-btn">Download PNG</button>
-                <button id="download-svg-btn">Download SVG</button>
-                <button id="download-txt-btn">Download TXT</button>
-                <button id="cheatsheet-btn">Cheatsheet</button>
+    <nav>
+        <?php foreach ($pageConfig as $pageName => $pageData): ?>
+            <a href="?page=<?php echo $pageName; ?>"><?php echo $pageData['title']; ?></a>
+        <?php endforeach; ?>
+    </nav>
+    
+<div class="container">
+    <?php if ($currentPage === 'editor'): ?>
+        <div class="editor-container">
+            <div class="editor-pane">
+                <div id="editor"></div>
             </div>
-            <div id="preview-content"></div>
+            <div class="preview-pane">
+                <div class="preview-controls">
+                    <!-- ボタンここ -->
+                </div>
+                <div id="preview-content"></div>
+            </div>
         </div>
-    </div>
+    <?php elseif ($currentPage === 'cheatsheet'): ?>
+        <?php include "../templates/cheatsheet.php"; ?>
+    <?php else: ?>
+        <h1><?php echo $pageConfig[$currentPage]['title']; ?></h1>
+        <p><?php echo $pageConfig[$currentPage]['content']; ?></p>
+    <?php endif; ?>
+</div>
+
     <script src="../node_modules/monaco-editor/min/vs/loader.js"></script>
     <script src="./js/editor.js"></script>
     <script src="./js/uml.js"></script>

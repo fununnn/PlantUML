@@ -1,0 +1,12 @@
+{
+  "home": {
+    "title": "Home",
+    "content": "Welcome to PlantUML Editor"
+  },
+  "editor": {
+    "title": "PlantUML Editor"
+  },
+  "cheatsheet": {
+    "title": "PlantUML Cheatsheet"
+  }
+}
